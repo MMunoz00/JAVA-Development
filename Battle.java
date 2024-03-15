@@ -1,64 +1,67 @@
-import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Random;
 
 public class Battle {
-
-    static Game g = new Game();
-    static Player p = new Player();
-    static Enemy e = new Enemy();
+    
+    public static Game g = new Game();
+    public static Enemy e = new Enemy();
     public Scanner input = new Scanner(System.in);
-
+    public Random rand = new Random();
+    
     public Battle() {
-
     }
 
-    public Integer battle(HashMap<String, Integer> player, HashMap<String, Integer> enemy, String name) {
+    public void battle(Player p, Enemy e, String name) {
         Boolean engage = true;
-        Integer playerDMG = 0;
-        Integer enemyDMG = 0;
+        Integer pDMG = p.stats.get("Damage");
+        Integer eDMG = e.stats.get("Damage");
 
         do {
             g.clearConsole();
             g.draw(name);
-            g.println("Enemy health:");
-            e.enemyStatus(enemy, enemyDMG);
+            g.println(name);
+            e.enemyStatus(e);
             g.println("");
-            p.status(player, playerDMG);
-            enemyDMG += battleOptions(player, enemy);
-            playerDMG += e.enemyAttack(player, enemy);
+            p.quickStatus();
+            pDMG += battleOptions(p, e);
+            eDMG += e.enemyAttack(p, e);
+            p.stats.put("Damage", eDMG);
+            e.stats.put("Damage", pDMG);
+            g.pressEnter();
 
-            if ((player.get("Health") - playerDMG) <= 0) {
-                return playerDMG;
-            } else if (enemy.get("Health") - enemyDMG > 0) {
+            if ((p.stats.get("Health") - p.stats.get("Damage")) <= 0) {
+                g.gameOver();
+                break;
+            } else if (e.stats.get("Health") - e.stats.get("Damage") <= 0) {
                 g.println(String.format("You have defeated the %s! Congratulations!", name));
-                g.pressEnter(input);
-                return playerDMG;
-            } else if (enemyDMG >= 1000000) {
+                g.pressEnter();
+                g.clearConsole();
+                g.draw("Chest");
+                g.println("You found a treasure chest!\n");
+                g.println("Inside, you find an elixir of life!");
+                g.println("Drinking it fills you with vitality!\n");
+                g.statUpgrade(p, "Health", 5);
+                g.pressEnter();
+                break;
+            } else if (e.stats.get("Damage") >= 1000000) {
                 engage = false;
             }
 
         } while (engage == true);
-
-        return playerDMG;
     }
 
-    public Integer battleOptions(HashMap<String, Integer> player,
-            HashMap<String, Integer> enemy) {
-        Integer enemyDEF = (int) Math.floor(enemy.get("Defense"));
-        Integer playerATK = (int) Math.floor(player.get("Attack"));
-        Integer enemyDMG = 0;
-        Random randomInt = new Random();
+    public Integer battleOptions(Player p, Enemy e) {
+        Integer eDEF = (int) Math.floor(e.stats.get("Defense"));
+        Integer pATK = (int) Math.floor(p.stats.get("Attack"));
 
-        Integer fun = randomInt.nextInt(500);
+        Integer fun = rand.nextInt(500);
 
         g.println("");
         g.println("What will you do?: ");
         g.println("");
         g.println("Attack");
         g.println("Item");
-        g.println("Run");
-        g.println("");
+        g.println("Run\n");
         Scanner input = new Scanner(System.in);
         do {
             String choice = g.stringInput(input).toUpperCase();
@@ -69,29 +72,64 @@ public class Battle {
                         g.println("Your attack missed! [0 DMG]");
                         return 0;
                     } else if (fun >= 450) {
-                        g.println(String.format("Critical hit! Your attack deals full damage! [%d DMG]", playerATK));
-                        return playerATK;
+                        g.println(String.format("Critical hit! Your attack deals full damage! [%d DMG]", pATK));
+                        return pATK;
                     } else {
-                        if ((playerATK - enemyDEF) <= 0) {
+                        if ((pATK - eDEF) <= 0) {
                             g.println("You attack the enemy! [1 DMG]");
                             return 1;
                         } else {
-                            g.println(String.format("You attack the enemy! [%d DMG]", (playerATK - enemyDEF)));
-                            return playerATK - enemyDEF;
+                            g.println(String.format("You attack the enemy! [%d DMG]", (pATK - eDEF)));
+                            return pATK - eDEF;
                         }
                     }
-                    // case "ITEM":
+
+                case "ITEM":
+                    p.useInventory();
+                    choice = g.stringInput(input).toUpperCase();
+                    break;
 
                 case "RUN":
                     g.println("You attempt to run away...");
                     if (fun >= 450) {
-                        g.println("Successfully got away!");
-                        g.pressEnter(input);
+                        g.println("Successfully got away!\n");
+                        g.pressEnter();
                         return 1000000;
+                    } else {
+                        g.println("Couldn't get away!");
+                        g.pressEnter();
+                        return 0;
                     }
-                    return enemyDMG;
+
                 case "HELP":
                     g.help();
+                    choice = g.stringInput(input).toUpperCase();
+                    break;
+                    
+                case "STATUS":
+                    p.status();
+                    choice = g.stringInput(input).toUpperCase();
+                    break;
+                    
+                case "SAVE":
+                    g.println("Save function is not completed at this time, sorry!");
+                    choice = g.stringInput(input).toUpperCase();
+                    break;
+                    
+                case "LOAD":
+                    g.println("Load function is not completed at this time, sorry!");
+                    choice = g.stringInput(input).toUpperCase();
+                    break;
+
+                default:
+                    g.println("");
+                    g.println("Please select one of the following options: ");
+                    g.println("");
+                    g.println("Attack");
+                    g.println("Item");
+                    g.println("Run\n");
+                    choice = g.stringInput(input).toUpperCase();        
+
             }
         } while (true);
     }

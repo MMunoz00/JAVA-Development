@@ -4,40 +4,42 @@ import java.util.Scanner;
 
 public class Game {
 
-    public static Player player = new Player();
     public Scanner input = new Scanner(System.in);
     public Integer level = 1;
     public Boolean run = true;
 
     public Game() {
-
     }
 
-    public HashMap<String, Integer> levelUp(HashMap<String, Integer> stats) {
+    public void levelUp(Player p) {
         clearConsole();
         println("YOU'VE LEVELED UP!\n");
         println("");
-        statUpgrade(stats, "Level", 1);
-        statUpgrade(stats, "Health", 10);
-        statUpgrade(stats, "Attack", 3);
-        statUpgrade(stats, "Defense", 2);
-        player.status(stats, 0);
-        pressEnter(input);
-        return stats;
+        statUpgrade(p, "Level", 1);
+        statUpgrade(p, "Health", 10);
+        statUpgrade(p, "Attack", 3);
+        statUpgrade(p, "Defense", 2);
+        p.stats.put("Damage", 0);
+        return;
     }
 
-    public HashMap<String, Integer> statUpgrade(HashMap<String, Integer> stats, String attribute,
-            Integer value) {
-        println(String.format("Your %s attribute has gone up by %d", attribute, value));
-        Integer upgrade = stats.get(attribute) + value;
-        stats.put(attribute, upgrade);
-        return stats;
+    public void statUpgrade(Player p, String attribute, Integer value) {
+        println(String.format("Your %s attribute has been modified by %d", attribute, value));
+        Integer upgrade = p.stats.get(attribute) + value;
+        p.stats.put(attribute, upgrade);
+        return;
     }
 
     public void menu(Scanner input) {
+        clearConsole();
+        draw("Title");
         println("\t\t\t\tPress Enter To Start\n");
         input.nextLine();
         return;
+    }
+
+    public void save(Player p, Level l) {
+
     }
 
     public void help() {
@@ -47,6 +49,7 @@ public class Game {
         println("\"Save\" - (NOT OPERATIONAL AT THIS TIME) Saves Player progress");
         println("\"Load\" - (NOT OPERATIONAL AT THIS TIME) Loads Player progress");
         println("");
+        pressEnter();
     }
 
     public void gameOver() {
@@ -55,18 +58,18 @@ public class Game {
         println("=========================");
         println("\tGAME OVER");
         println("=========================");
-        pressEnter(input);
+        pressEnter();
     }
 
     public final void clearConsole() {
         print("\033[H\033[2J");
         System.out.flush();
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 50; i++) {
             println("");
         }
     }
 
-    public void pressEnter(Scanner input) {
+    public void pressEnter() {
         println("\t\t\t\tPress Enter To Continue\n");
         input.nextLine();
         return;
@@ -74,7 +77,7 @@ public class Game {
 
     public String stringInput(Scanner input) {
         try {
-            String value = input.next();
+            String value = input.nextLine();
             return value;
         } catch (NoSuchElementException e) {
             String error = "error - no such element exception";
@@ -112,7 +115,7 @@ public class Game {
 
     public void draw(String name) {
         HashMap<String, String> art = new HashMap<>();
-        art.put("title", """
+        art.put("Title", """
                       ___                                                               _
                     ,"___".    ____     _ _____     _ _____      ___ _    _ ___      ___FJ
                     FJ---L]   F __ J   J '_  _ `,  J '_  _ `,   F __` L  J '__ J    F __  L
@@ -137,7 +140,7 @@ public class Game {
 
 
                 """);
-        art.put("chest", """
+        art.put("Chest", """
                                    _.--.
                                _.-'_:-'||
                            _.-'_.-::::'||
@@ -158,7 +161,7 @@ public class Game {
                     '-._'-.|| |' `_.-'
                            '-.||_/.-'
                               """);
-        art.put("devil", """
+        art.put("Demon", """
                     *                       *
                     *                 *
                    )       (\\___/)     (
