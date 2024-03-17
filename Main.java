@@ -1,29 +1,24 @@
-import java.util.Scanner;
-
 public class Main {
-    public static Game g = new Game();
-    public static Player p = new Player();
-    public static Level level = new Level();
-    public static Scanner input = new Scanner(System.in);
-
+    
     public static void main(String[] args) {
+        // Game g = new Game();
+        
+        Game.menu();
 
-        g.menu(input);
-
-        g.println("Your current status:\n");
-        p.status();
-        g.pressEnter();
+        Game.println("Your current status:\n");
+        Game.p.status();
+        Game.pressEnter();
         do {
-            switch (g.level) {
+            switch (Game.level) {
                 case 1:
-                    g.level = level.one(p, input);
+                    Game.level = Game.l.one(Game.p);
                     break;
                 case 2:
-                    g.level = level.two(p, input);
+                    Game.level = Game.l.two(Game.p);
                     break;
                 default:
-                    g.run = false;
+                    Game.run = false;
             }
-        } while (g.run != false);
+        } while (Game.run != false);
     }
 }

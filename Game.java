@@ -1,36 +1,48 @@
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+// import java.io.*;
 
 public class Game {
-
-    public Scanner input = new Scanner(System.in);
-    public Integer level = 1;
-    public Boolean run = true;
-
+    public static Player p = new Player();
+    public static Level l = new Level();
+    public static Scanner input = new Scanner(System.in);
+    public static Integer level;
+    public static Boolean run;
+    
     public Game() {
+        level = 1;
+        run = true;
     }
 
-    public void levelUp(Player p) {
+    public static void levelUp() {
         clearConsole();
         println("YOU'VE LEVELED UP!\n");
         println("");
-        statUpgrade(p, "Level", 1);
-        statUpgrade(p, "Health", 10);
-        statUpgrade(p, "Attack", 3);
-        statUpgrade(p, "Defense", 2);
+        statUpgrade("Level", 1);
+        statUpgrade("Health", 10);
+        statUpgrade("Attack", 3);
+        statUpgrade("Defense", 2);
         p.stats.put("Damage", 0);
         return;
     }
 
-    public void statUpgrade(Player p, String attribute, Integer value) {
-        println(String.format("Your %s attribute has been modified by %d", attribute, value));
+    public static void statUpgrade(String attribute, Integer value) {
+        if (value > 0) {
+            println(String.format("Your %s attribute has increased by %d", attribute, value));
+        } 
+        else if (value == 0) {
+            println("ERROR: ZERO ATTRIBUTE MODIFICATION");
+            return;
+        } else {
+            println(String.format("Your %s attribute has decreased by %d", attribute, value));
+        }
         Integer upgrade = p.stats.get(attribute) + value;
         p.stats.put(attribute, upgrade);
         return;
     }
 
-    public void menu(Scanner input) {
+    public static void menu() {
         clearConsole();
         draw("Title");
         println("\t\t\t\tPress Enter To Start\n");
@@ -38,11 +50,15 @@ public class Game {
         return;
     }
 
-    public void save(Player p, Level l) {
+    public static void save() {
 
     }
 
-    public void help() {
+    public static void load() {
+
+    }
+
+    public static void help() {
         println("");
         println("\"Help\" - Displays this menu");
         println("\"Status\" - Displays Player status sheet");
@@ -52,7 +68,7 @@ public class Game {
         pressEnter();
     }
 
-    public void gameOver() {
+    public static void gameOver() {
         clearConsole();
         println("You succumb to your wounds, and your eyes close for the last time...\n\n");
         println("=========================");
@@ -61,7 +77,7 @@ public class Game {
         pressEnter();
     }
 
-    public final void clearConsole() {
+    public static final void clearConsole() {
         print("\033[H\033[2J");
         System.out.flush();
         for (int i = 0; i < 50; i++) {
@@ -69,13 +85,13 @@ public class Game {
         }
     }
 
-    public void pressEnter() {
+    public static void pressEnter() {
         println("\t\t\t\tPress Enter To Continue\n");
         input.nextLine();
         return;
     }
 
-    public String stringInput(Scanner input) {
+    public static String stringInput() {
         try {
             String value = input.nextLine();
             return value;
@@ -86,7 +102,7 @@ public class Game {
         }
     }
 
-    public Integer intInput(Scanner input) {
+    public static Integer intInput() {
         try {
             Integer value = input.nextInt();
             return value;
@@ -97,23 +113,23 @@ public class Game {
         }
     }
 
-    public void print(String input) {
+    public static void print(String input) {
         System.out.print(input);
     }
 
-    public void print(Integer input) {
+    public static void print(Integer input) {
         System.out.print(input);
     }
 
-    public void println(String input) {
+    public static void println(String input) {
         System.out.println(input);
     }
 
-    public void println(Integer input) {
+    public static void println(Integer input) {
         System.out.println(input);
     }
 
-    public void draw(String name) {
+    public static void draw(String name) {
         HashMap<String, String> art = new HashMap<>();
         art.put("Title", """
                       ___                                                               _

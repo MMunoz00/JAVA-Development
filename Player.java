@@ -1,12 +1,13 @@
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.Vector;
+import java.util.Iterator;
+
 
 public class Player {
 
-    public static Game g = new Game();
     public static Character c = new Character();
-    public Scanner input = new Scanner(System.in);
     public HashMap<String, Integer> stats = new HashMap<String, Integer>();
     public Item o = new Item();
     public Vector<Item> inventory = new Vector<Item>();
@@ -17,20 +18,24 @@ public class Player {
 
     public void showInventory() {
         for (Item item: inventory) {
-            g.println(String.format("[%s]", item.Name));
+            Game.println(String.format("[%s]", item.Name));
         }
     }
 
     public void useInventory() {
+        if (inventory.isEmpty()) {
+            Game.println("You currently have no items.");
+            return;
+        }
         showInventory();
-        g.println("Use an item? Y or N:\n");
-        String choice = g.stringInput(input).toUpperCase();
+        Game.println("Use an item? Y or N:\n");
+        String choice = Game.stringInput().toUpperCase();
         switch (choice) {
             case "Y", "YES":
                 Boolean check = false;
-                g.println("Which item do you want to use?\n");
+                Game.println("Which item do you want to use?\n");
                 showInventory();
-                String i = g.stringInput(input).toUpperCase();
+                String i = Game.stringInput().toUpperCase();
                 for (Item item: inventory) {
                     if (i.equals(item.Name)) {
                         check = true;
@@ -39,28 +44,27 @@ public class Player {
                 }
 
                 if (check == true) {
-                    g.println(String.format("Use [%s]? Y or N:\n", i));
-                    choice = g.stringInput(input).toUpperCase();
+                    Game.println(String.format("Use [%s]? Y or N:\n", i));
+                    choice = Game.stringInput().toUpperCase();
                     switch (choice) {
                         case "Y", "YES":
-                            o.useItem(this, i);
-                            removeItem(i);
+                            o.useItem(i);
+                            this.removeItem(i);
                             break;
                         default:
                             break;
                     }
                     
                 } else {
-                    g.println(String.format("Item: [%s] does not exist", i));
-                    i = g.stringInput(input).toUpperCase();
+                    Game.println(String.format("Item: [%s] does not exist", i));
+                    i = Game.stringInput().toUpperCase();
                 }
 
-                break;
+                return;
 
             default:
-                break;
+                return;
         }
-        return;
     }
 
     public void giveItem(String name) {
@@ -70,27 +74,38 @@ public class Player {
     }
 
     public void removeItem(String name) {
-        for (Item item: inventory) {
+        Iterator<Item> iterator = inventory.iterator();
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
             if (name.equals(item.Name)) {
-                inventory.remove(item);
+                iterator.remove();
             }
         }
     }
 
+    public void sortInventory() {
+        Collections.sort(inventory, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+                return item1.Name.compareTo(item2.Name);
+            }
+        });
+    }
+
     public void status() {
-        g.println("");
-        g.println("Level " + stats.get("Level") + "\n");
-        g.println("Health: " + (stats.get("Health") - stats.get("Damage")) + "/" + stats.get("Health"));
-        g.println("Attack: " + stats.get("Attack"));
-        g.println("Defense: " + stats.get("Defense"));
-        g.println("");
+        Game.println("");
+        Game.println("Level " + stats.get("Level") + "\n");
+        Game.println("Health: " + (stats.get("Health") - stats.get("Damage")) + "/" + stats.get("Health"));
+        Game.println("Attack: " + stats.get("Attack"));
+        Game.println("Defense: " + stats.get("Defense"));
+        Game.println("");
     }
     
     public void quickStatus() {
-        g.println("");
-        g.println("Level " + stats.get("Level"));
-        g.println("Health: " + (stats.get("Health") - stats.get("Damage")) + "/" + stats.get("Health"));
-        g.println("");
+        Game.println("");
+        Game.println("Level " + stats.get("Level"));
+        Game.println("Health: " + (stats.get("Health") - stats.get("Damage")) + "/" + stats.get("Health"));
+        Game.println("");
     }
 
 }
