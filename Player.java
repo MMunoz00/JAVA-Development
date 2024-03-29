@@ -22,6 +22,17 @@ public class Player {
         }
     }
 
+    public String printInventory() {
+        String items = "";
+        for (Item item: inventory) {
+            items += String.format("%s,", item.Name);
+        }
+        if (items.length() > 0) {
+            items = items.substring(0, items.length() - 1);
+        }
+        return items;
+    }
+
     public void useInventory() {
         if (inventory.isEmpty()) {
             Game.println("You currently have no items.");
@@ -29,13 +40,13 @@ public class Player {
         }
         showInventory();
         Game.println("Use an item? Y or N:\n");
-        String choice = Game.stringInput().toUpperCase();
+        String choice = Game.stringInput();
         switch (choice) {
             case "Y", "YES":
                 Boolean check = false;
                 Game.println("Which item do you want to use?\n");
                 showInventory();
-                String i = Game.stringInput().toUpperCase();
+                String i = Game.stringInput();
                 for (Item item: inventory) {
                     if (i.equals(item.Name)) {
                         check = true;
@@ -45,7 +56,7 @@ public class Player {
 
                 if (check == true) {
                     Game.println(String.format("Use [%s]? Y or N:\n", i));
-                    choice = Game.stringInput().toUpperCase();
+                    choice = Game.stringInput();
                     switch (choice) {
                         case "Y", "YES":
                             o.useItem(i);
@@ -57,7 +68,7 @@ public class Player {
                     
                 } else {
                     Game.println(String.format("Item: [%s] does not exist", i));
-                    i = Game.stringInput().toUpperCase();
+                    i = Game.stringInput();
                 }
 
                 return;
@@ -68,9 +79,45 @@ public class Player {
     }
 
     public void giveItem(String name) {
-        name = name.toUpperCase();
-        Item item = new Item(name);
-        this.inventory.add(item);
+        if (inventory.size() < 8) {
+            name = name.toUpperCase();
+            Item item = new Item(name);
+            this.inventory.add(item);
+            return;
+        }
+        else {
+            Game.println("Too many items in inventory!\n");
+            Game.println("Choose an item to replace, or toss the new item.");
+            Game.p.showInventory();
+            String choice = Game.stringInput();
+            while (true) {
+                switch (choice) {
+                    case "HEALTH POTION":
+                        Game.p.removeItem("health potion");
+                        Game.p.giveItem(name);
+                        return;
+                    case "HEALTH ELIXIR":
+                        Game.p.removeItem("health elixir");
+                        Game.p.giveItem(name);
+                        return;
+                    case "ATTACK ELIXIR":
+                        Game.p.removeItem("attack elixir");
+                        Game.p.giveItem(name);
+                        return;
+                    case "DEFENSE ELIXIR":
+                        Game.p.removeItem("defense elixir");
+                        Game.p.giveItem(name);
+                        return;
+                    case "TOSS":
+                        Game.println(String.format("$s has been discarded"));
+                        return;
+                    default:
+                        Game.println("Invalid input, try again");
+                        choice = Game.stringInput();
+                        break;
+                }
+            }
+        }
     }
 
     public void removeItem(String name) {
@@ -79,6 +126,7 @@ public class Player {
             Item item = iterator.next();
             if (name.equals(item.Name)) {
                 iterator.remove();
+                return;
             }
         }
     }
@@ -107,5 +155,7 @@ public class Player {
         Game.println("Health: " + (stats.get("Health") - stats.get("Damage")) + "/" + stats.get("Health"));
         Game.println("");
     }
+
+
 
 }

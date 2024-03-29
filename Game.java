@@ -1,18 +1,32 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-// import java.io.*;
+import java.io.File;
 
-public class Game {
+public class Game implements Serializable {
+    private static Game game;
     public static Player p = new Player();
     public static Level l = new Level();
-    public static Scanner input = new Scanner(System.in);
+    public static transient Scanner input = new Scanner(System.in);
     public static Integer level;
-    public static Boolean run;
+    public static transient Boolean run;
     
     public Game() {
         level = 1;
         run = true;
+    }
+
+    public static Game getGameInstance() {
+        if (game == null){
+            game = new Game();
+        }
+        return game;
     }
 
     public static void levelUp() {
@@ -51,19 +65,92 @@ public class Game {
     }
 
     public static void save() {
+        String filename = "save.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(filename)))) {
+            // Write the data of the Game object to the file
+            writer.write("Level: " + level + "\n");
+            writer.write("Player Level: " + p.stats.get("Level") + "\n");
+            writer.write("Player Health: " + p.stats.get("Health") + "\n");
+            writer.write("Player Attack: " + p.stats.get("Attack") + "\n");
+            writer.write("Player Defense: " + p.stats.get("Defense") + "\n");
+            writer.write("Player Damage: " + p.stats.get("Damage") + "\n");
+            writer.write("Inventory: " + p.printInventory() + "\n");
 
+            System.out.println("Game saved successfully.");            
+        } catch (IOException e) {
+            System.out.println("Error saving game: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    public static void load() {
-
+    public static Game load() {
+        game = new Game();
+        try (BufferedReader reader = new BufferedReader(new FileReader("save.txt"))) {
+            // Read the data from the file and update the Game object
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(": ");
+                if (parts.length == 2) {
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+                    switch (key) {
+                        case "Level":
+                            level = Integer.parseInt(value);
+                            break;
+                        case "Player Level":
+                            p.stats.put("Level", (Integer.parseInt(value)));
+                            break;
+                        case "Player Health":
+                            p.stats.put("Health", (Integer.parseInt(value)));
+                            break;
+                        case "Player Attack":
+                            p.stats.put("Attack", (Integer.parseInt(value)));
+                            break;
+                        case "Player Defense":
+                            p.stats.put("Defense", (Integer.parseInt(value)));
+                            break;
+                        case "Player Damage":
+                            p.stats.put("Damage", (Integer.parseInt(value)));
+                            break;
+                        case "Inventory":
+                            String inventoryParts[] = value.split(",");
+                            p.inventory.clear();
+                            for (int i = 0; i < inventoryParts.length; i++) {
+                                println(inventoryParts[i]);
+                                switch (inventoryParts[i]) {
+                                    case "HEALTH POTION":
+                                        p.giveItem("health potion");
+                                        break;
+                                    case "HEALTH ELIXIR":
+                                        p.giveItem("health elixir");
+                                        break;
+                                    case "ATTACK ELIXIR":
+                                        p.giveItem("attack elixir");
+                                        break;
+                                    case "DEFENSE ELIXIR": 
+                                        p.giveItem("defense elixir");
+                                        break;
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+            System.out.println("Game loaded successfully.");
+        } catch (IOException e) {
+            System.out.println("Error loading game: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return game;
     }
 
     public static void help() {
         println("");
         println("\"Help\" - Displays this menu");
         println("\"Status\" - Displays Player status sheet");
-        println("\"Save\" - (NOT OPERATIONAL AT THIS TIME) Saves Player progress");
-        println("\"Load\" - (NOT OPERATIONAL AT THIS TIME) Loads Player progress");
+        println("\"Level\" - Displays current level");
+        println("\"Save\" - Saves Player progress");
+        println("\"Load\" - Loads Player progress");
         println("");
         pressEnter();
     }
@@ -94,7 +181,7 @@ public class Game {
     public static String stringInput() {
         try {
             String value = input.nextLine();
-            return value;
+            return value.toUpperCase();
         } catch (NoSuchElementException e) {
             String error = "error - no such element exception";
             print(error);
@@ -200,6 +287,33 @@ public class Game {
                           |#\\      -"
                            -"
                             """);
+        art.put("Merchant", """
+
+                         ____           
+                    .--\"\"___ \"\"-,       
+                .\' .-\"\" __:-\' ;       
+                /__:.--\"\"      :       
+                \\              _`-\'\\   
+                \\_..--\"\"    \"\"     :  
+                /      ______..,   ;  
+            _gd$$$$$$$$$$$$$$$P===;  
+            ,g$$$$$$P^^^^T$$$$$P'    ;  
+            T^\": ,-.       \"\"\"  \\    :  
+                ;;  d.   .-\"\"\"d. \\ ,-:  
+            : \'.:$$\'-\"    :$$  \'.-,; 
+            ;   :^\"    \"-._T\'  \') :: 
+            /   /      \\         ._.\' 
+            .   :        ; \\       \\;  
+            ;    \\      /   :       :  
+            ;     '-..-'            ;  
+            :     ,---.    ,       /   
+            \'    \'  -. \"--\"      .'    
+            `.              _.-\"      
+                \"-.       _.-\"          
+                \"-._.-\"     
+
+            """);
+            
         if (art.get(name) != null) {
             println(art.get(name));
         } else {

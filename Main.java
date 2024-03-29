@@ -1,7 +1,6 @@
 public class Main {
     
     public static void main(String[] args) {
-        // Game g = new Game();
         
         Game.menu();
 
@@ -11,11 +10,20 @@ public class Main {
         do {
             switch (Game.level) {
                 case 1:
-                    Game.level = Game.l.one(Game.p);
+                    Game.level = Game.l.one();
                     break;
                 case 2:
-                    Game.level = Game.l.two(Game.p);
+                    Game.level = Game.l.two();
                     break;
+                // case 3:
+                //     Game.level = Game.l.three();
+                //     break;
+                // case 4:
+                //     Game.level = Game.l.four();
+                //     break;
+                // case 5:
+                //     Game.level = Game.l.five();
+                //     break;
                 default:
                     Game.run = false;
             }

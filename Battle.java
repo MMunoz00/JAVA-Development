@@ -61,7 +61,7 @@ public class Battle {
             Game.println("Attack");
             Game.println("Item");
             Game.println("Run\n");
-            String choice = Game.stringInput().toUpperCase();
+            String choice = Game.stringInput();
             Game.println("");
             switch (choice) {
                 case "ATTACK":
@@ -102,17 +102,14 @@ public class Battle {
                     
                 case "STATUS":
                     Game.p.status();
-                    // choice = Game.stringInput().toUpperCase();
                     break;
                     
                 case "SAVE":
-                    Game.println("Save function is not completed at this time, sorry!");
-                    // choice = Game.stringInput().toUpperCase();
+                    Game.println("You can't save in the middle of a battle!");
                     break;
                     
                 case "LOAD":
                     Game.println("Load function is not completed at this time, sorry!");
-                    // choice = Game.stringInput().toUpperCase();
                     break;
 
                 default:
@@ -122,7 +119,6 @@ public class Battle {
                     Game.println("Attack");
                     Game.println("Item");
                     Game.println("Run\n");
-                    // choice = Game.stringInput().toUpperCase();  
                     break;      
 
             }

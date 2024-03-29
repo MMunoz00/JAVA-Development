@@ -1,0 +1,7 @@
+Level: 2
+Player Level: 2
+Player Health: 20
+Player Attack: 8
+Player Defense: 5
+Player Damage: 0
+Inventory: 
