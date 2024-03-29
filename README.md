@@ -20,6 +20,7 @@ The programming language used in this program is Java, and the only library used
 - [ASCII Art Archive](https://www.asciiart.eu)
 - [StackOverflow](https://www.stackoverflow.com)
 - [GeeksforGeeks](https://www.geeksforgeeks.org/java/)
+- [OpenAI - ChatGPT](chat.openai.com)
 
 # Future Work
 
