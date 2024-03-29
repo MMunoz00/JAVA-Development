@@ -6,7 +6,7 @@ I created a commandline text-based video game, and I implemented the use of a cu
 
 I wrote this program so that I can learn Java, and practice, as well as learn a little bit about game design and everything possible with my game.
 
-[Software Demo Video](https://youtu.be/y0DrCp1XeEo)
+[Software Demo Video](https://youtu.be/f4hY3ehEmmg)
 
 # Development Environment
 
@@ -23,11 +23,14 @@ The programming language used in this program is Java, and the only library used
 
 # Future Work
 
-- Offload functions into classes
-- Save/Load system
-- Run/Flee option in battles
+- Offload functions into classes COMPLETED
+- Save/Load system COMPLETED
+- Run/Flee option in battles COMPLETED
+- Player level tracking COMPLETED
+- Items COMPLETED
+- Inventory COMPLETED
+
 - Overarching story?
 - Additional battles
 - More levels
-- Player level tracking
 - Missions?
